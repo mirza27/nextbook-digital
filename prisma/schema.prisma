@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  book_id          Int           @id @default(autoincrement())
+  title            String
+  desc             String?
+  img_url          String?
+  book_url         String?
+  price            Int
+  user             User          @relation(fields: [user_id], references: [user_id])
+  user_id          Int
+  category         BookCategory  @relation(fields: [book_category_id], references: [book_category_id])
+  book_category_id Int
+  collection       Collection[] 
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt  
+
+  @@map("books")
+}
+
+
+model User {
+  user_id   Int         @id @default(autoincrement())
+  name      String
+  email     String      @unique
+  password  String
+  bio       String?
+  credit    Int
+  books     Book[]
+  collections  Collection[]
+
+  @@map("users")
+}
+
+model Collection {
+  collection_id     Int       @id @default(autoincrement())
+  book              Book      @relation(fields: [book_id], references: [book_id])
+  book_id           Int
+  user              User      @relation(fields: [user_id], references: [user_id])
+  user_id           Int
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("collections")
+}
+
+
+model BookCategory {
+  book_category_id Int    @id @default(autoincrement())
+  category_name    String
+  books            Book[]
+
+  @@map("book_categories")
+}
