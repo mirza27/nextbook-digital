@@ -3,7 +3,7 @@ interface Book {
     book_id: number;
     title: string;
     desc?: string | null;
-    img_url?: string | null;
+    img_url: string | null;
     book_url?: string | null;
     price: number;
     user: User;
@@ -27,6 +27,7 @@ interface User {
 
 // Collection model interface
 interface Collection {
+    [x: string]: any;
     collection_id: number;
     book: Book;
     book_id: number;

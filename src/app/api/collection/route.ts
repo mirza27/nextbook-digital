@@ -5,8 +5,15 @@ import { getSession } from "@/lib/session";
 
 // GET all my collection
 export async function GET() {
+    const session = await getSession();
+
     try {
         const collection: Collection[] = await prisma.collection.findMany({
+            where: {
+                user: {
+                    user_id: parseInt(session?.userId as string),
+                }
+            },
             include: {
                 book: true,
             }
@@ -38,7 +45,7 @@ export async function GET() {
     }
 }
 
-
+// BUY BOOK / add to collection
 export async function POST(request: Request) {
     const {
         book_id,
@@ -61,7 +68,7 @@ export async function POST(request: Request) {
         }
 
 
-        const user: User = await prisma.user.findUnique({
+        const user: User | null = await prisma.user.findUnique({
             where: {
                 user_id: parseInt(session?.userId as string)
             },
@@ -77,7 +84,7 @@ export async function POST(request: Request) {
         });
 
         // jika buku user sendiri
-        if (user.user_id == book.user_id) {
+        if (user!.user_id == book.user_id) {
             return NextResponse.json(
                 {
                     success: false,
@@ -91,7 +98,7 @@ export async function POST(request: Request) {
         }
 
 
-        if (user.credit < book.price) {
+        if (user!.credit < book.price) {
             return NextResponse.json(
                 {
                     success: false,
@@ -127,7 +134,7 @@ export async function POST(request: Request) {
                     user_id: parseInt(session?.userId as string)
                 },
                 data: {
-                    credit: user.credit - book.price
+                    credit: user!.credit - book.price
                 }
             });
 

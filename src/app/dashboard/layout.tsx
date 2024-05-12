@@ -1,23 +1,19 @@
 "use client";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { useState, useEffect } from "react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import Swal from "sweetalert2";
+import Link from "next/link";
 
-const user = {
-  name: "Tom Cook",
-  email: "tom@example.com",
-  imageUrl:
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-};
 const navigation = [
   { name: "Dashboard", href: "/dashboard/", current: true },
   { name: "Authors", href: "/dashboard/author", current: false },
   { name: "My Book", href: "/dashboard/myBook", current: false },
 ];
 const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: "Your Profile", href: "/dashboard/profile" },
+  { name: "Sign out", },
 ];
 
 function classNames(...classes: (string | undefined | null | false)[]) {
@@ -25,16 +21,25 @@ function classNames(...classes: (string | undefined | null | false)[]) {
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | undefined>();
+
+  const getUserProfile = async () => {
+    try {
+      const response = await fetch("/api/user");
+      const data = await response.json();
+      setUser(data.user);
+    } catch (error) {
+      console.log(error);
+      Swal.fire("Error!", "You Have to login first!", "error");
+    }
+  };
+
+  useEffect(() => {
+    getUserProfile();
+  }, []);
+
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-gray-100">
-        <body class="h-full">
-        ```
-      */}
       <div className="min-h-full">
         <div className="bg-gray-800 pb-32">
           <Disclosure as="nav" className="bg-gray-800">
@@ -47,7 +52,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         <div className="flex-shrink-0">
                           <img
                             className="h-8 w-8"
-                            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                            src="https://plus.unsplash.com/premium_vector-1711505230579-e446d3e5b86f?bg=FFFFFF&q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
+                            "
                             alt="Your Company"
                           />
                         </div>
@@ -73,54 +79,61 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       </div>
                       <div className="hidden md:block">
                         <div className="ml-4 flex items-center md:ml-6">
-                          <button
-                            type="button"
-                            className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                          >
-                            <span className="sr-only">View notifications</span>
-                            <BellIcon className="h-6 w-6" aria-hidden="true" />
-                          </button>
-
                           {/* Profile dropdown */}
-                          <Menu as="div" className="relative ml-3">
-                            <div>
-                              <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                <span className="sr-only">Open user menu</span>
-                                <img
-                                  className="h-8 w-8 rounded-full"
-                                  src={user.imageUrl}
-                                  alt=""
-                                />
-                              </Menu.Button>
-                            </div>
-                            <Transition
-                              as={Fragment}
-                              enter="transition ease-out duration-100"
-                              enterFrom="transform opacity-0 scale-95"
-                              enterTo="transform opacity-100 scale-100"
-                              leave="transition ease-in duration-75"
-                              leaveFrom="transform opacity-100 scale-100"
-                              leaveTo="transform opacity-0 scale-95"
-                            >
-                              <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                {userNavigation.map((item) => (
-                                  <Menu.Item key={item.name}>
-                                    {({ active }) => (
-                                      <a
-                                        href={item.href}
-                                        className={classNames(
-                                          active ? "bg-gray-100" : "",
-                                          "block px-4 py-2 text-sm text-gray-700"
+                          {user ? (
+                            <>
+                              <Menu as="div" className="relative ml-3">
+                                <div>
+                                  <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                    <span className="sr-only">
+                                      Open user menu
+                                    </span>
+                                    <img
+                                      className="h-8 w-8 rounded-full bg-cover-circle"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmyoQ5HI7MXBYtxT9xBSpbUvVbcUPgpJaIOHfgP3_ahQ&s"
+                                      alt=""
+                                    />
+                                  </Menu.Button>
+                                </div>
+                                <Transition
+                                  as={Fragment}
+                                  enter="transition ease-out duration-100"
+                                  enterFrom="transform opacity-0 scale-95"
+                                  enterTo="transform opacity-100 scale-100"
+                                  leave="transition ease-in duration-75"
+                                  leaveFrom="transform opacity-100 scale-100"
+                                  leaveTo="transform opacity-0 scale-95"
+                                >
+                                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                    {userNavigation.map((item) => (
+                                      <Menu.Item key={item.name}>
+                                        {({ active }) => (
+                                          <a
+                                            href={item.href}
+                                            className={classNames(
+                                              active ? "bg-gray-100" : "",
+                                              "block px-4 py-2 text-sm text-gray-700"
+                                            )}
+                                          >
+                                            {item.name}
+                                          </a>
                                         )}
-                                      >
-                                        {item.name}
-                                      </a>
-                                    )}
-                                  </Menu.Item>
-                                ))}
-                              </Menu.Items>
-                            </Transition>
-                          </Menu>
+                                      </Menu.Item>
+                                    ))}
+                                  </Menu.Items>
+                                </Transition>
+                              </Menu>
+                            </>
+                          ) : (
+                            <Link href={`/login`}>
+                              <button
+                                type="button"
+                                className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-2.5 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-full sm:flex-grow-0"
+                              >
+                                Login
+                              </button>
+                            </Link>
+                          )}
                         </div>
                       </div>
                       <div className="-mr-2 flex md:hidden">
@@ -168,37 +181,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       <div className="flex-shrink-0">
                         <img
                           className="h-10 w-10 rounded-full"
-                          src={user.imageUrl}
+                          // src={user.imageUrl}
                           alt=""
                         />
                       </div>
                       <div className="ml-3">
                         <div className="text-base font-medium leading-none text-white">
-                          {user.name}
+                          {user?.name}
                         </div>
                         <div className="text-sm font-medium leading-none text-gray-400">
-                          {user.email}
+                          {user?.email}
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      >
-                        <span className="sr-only">View notifications</span>
-                        <BellIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
-                    </div>
-                    <div className="mt-3 space-y-1 px-2">
-                      {userNavigation.map((item) => (
-                        <Disclosure.Button
-                          key={item.name}
-                          as="a"
-                          href={item.href}
-                          className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                        >
-                          {item.name}
-                        </Disclosure.Button>
-                      ))}
                     </div>
                   </div>
                 </Disclosure.Panel>

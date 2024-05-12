@@ -1,34 +1,103 @@
 "use client";
 import next from "next";
+import { useState, useEffect } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { PaperClipIcon } from "@heroicons/react/20/solid";
-
-const orders = [
-  {
-    number: "4376",
-    status: "Delivered on January 22, 2021",
-    href: "#",
-    invoiceHref: "#",
-    products: [
-      {
-        id: 1,
-        name: "Machined Brass Puzzle",
-        href: "#",
-        price: "$95.00",
-        color: "Brass",
-        size: '3" x 3" x 3"',
-        imageSrc:
-          "https://tailwindui.com/img/ecommerce-images/order-history-page-07-product-01.jpg",
-        imageAlt:
-          "Brass puzzle in the shape of a jack with overlapping rounded posts.",
-      },
-      // More products...
-    ],
-  },
-  // More orders...
-];
+import Swal from "sweetalert2";
 
 export default function BooksPage() {
+  const params = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
+  const [book, setBook] = useState<Book | undefined>();
+  const [collection, setCollection] = useState<Collection | undefined>();
+  const [isPurchased, setIsPurchased] = useState(false);
+
+  const handlePurchase = async (bookId: Number) => {
+    try {
+      const result = await Swal.fire({
+        title: "Confirm Purchase",
+        text: "Are you sure you want to purchase this book?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, purchase it!",
+      });
+
+      if (result.isConfirmed) {
+        // Proceed with purchase
+        const response = await fetch("/api/collection", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            book_id: bookId,
+          }),
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          // Handle successful purchase
+          Swal.fire("Success!", "Book purchased successfully!", "success");
+          setIsPurchased(true);
+        } else {
+          // Handle error cases
+          Swal.fire(
+            "Error!",
+            data.message || "Failed to purchase the book.",
+            "error"
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error purchasing book:", error);
+      Swal.fire("Error!", "Failed to purchase the book.", "error");
+    }
+  };
+
+  const getBook = async () => {
+    try {
+      const response = await fetch(`/api/book/${params.id}`);
+      const data = await response.json();
+      setBook(data.data);
+      console.log(response);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      return [];
+    }
+  };
+
+  const getMyCollections = async () => {
+    try {
+      const response = await fetch("/api/collection");
+      const data = await response.json();
+      setCollection(data.data);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      return [];
+    }
+  };
+
+  const checkIfbookIsPurchased = async () => {
+    if (book && collection) {
+      const purchasedBook = collection.find(
+        (item: any) => item.book_id === book.book_id
+      );
+      setIsPurchased(!!purchasedBook); // Set isPurchased menjadi true jika buku telah dibeli
+    }
+  };
+
+  useEffect(() => {
+    getBook();
+    getMyCollections();
+  }, []);
+
+  useEffect(() => {
+    checkIfbookIsPurchased();
+  }, [book, collection]);
+
   return (
     <>
       <header className="mb-2.5">
@@ -84,109 +153,119 @@ export default function BooksPage() {
           </div>
         </div>
       </header>
-
-      <div className="overflow-hidden bg-white shadow sm:rounded-lg">
-        <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg font-medium leading-6 text-gray-900">
-            Applicant Information
-          </h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">
-            Personal details and application.
-          </p>
-        </div>
-        <div className="border-t border-gray-200">
-          <dl>
-            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Full name</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                Margot Foster
-              </dd>
-            </div>
-            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">
-                Application for
-              </dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                Backend Developer
-              </dd>
-            </div>
-            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">
-                Email address
-              </dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                margotfoster@example.com
-              </dd>
-            </div>
-            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">
-                Salary expectation
-              </dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                $120,000
-              </dd>
-            </div>
-            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">About</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim
-                incididunt cillum culpa consequat. Excepteur qui ipsum aliquip
-                consequat sint. Sit id mollit nulla mollit nostrud in ea officia
-                proident. Irure nostrud pariatur mollit ad adipisicing
-                reprehenderit deserunt qui eu.
-              </dd>
-            </div>
-            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Attachments</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                <ul
-                  role="list"
-                  className="divide-y divide-gray-200 rounded-md border border-gray-200"
-                >
-                  <li className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                    <div className="flex w-0 flex-1 items-center">
-                      <PaperClipIcon
-                        className="h-5 w-5 flex-shrink-0 text-gray-400"
-                        aria-hidden="true"
-                      />
-                      <span className="ml-2 w-0 flex-1 truncate">
-                        resume_back_end_developer.pdf
-                      </span>
-                    </div>
-                    <div className="ml-4 flex-shrink-0">
-                      <a
-                        href="#"
-                        className="font-medium text-indigo-600 hover:text-indigo-500"
+      {book ? (
+        <div className="overflow-hidden bg-white shadow sm:rounded-lg">
+          <div className="px-4 py-5 sm:px-6">
+            <h3 className="text-lg font-medium leading-6 text-gray-900">
+              Book Detail Information
+            </h3>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+              {book.title} by {book.user.name}
+            </p>
+          </div>
+          <div className="border-t border-gray-200">
+            <dl>
+              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt className="text-sm font-medium text-gray-500">
+                  Book Title
+                </dt>
+                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                  {book.title}
+                </dd>
+              </div>
+              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt className="text-sm font-medium text-gray-500">
+                  Descryption / Synopsis
+                </dt>
+                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                  {book.desc}
+                </dd>
+              </div>
+              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt className="text-sm font-medium text-gray-500">Author</dt>
+                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                  {book.user.name}
+                </dd>
+              </div>
+              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt className="text-sm font-medium text-gray-500">Price</dt>
+                <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                  ${book.price}
+                </dd>
+              </div>
+              {isPurchased ? (
+                <>
+                  <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Buy Book
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                      <ul
+                        role="list"
+                        className="divide-y divide-gray-200 rounded-md border border-gray-200"
                       >
-                        Download
-                      </a>
-                    </div>
-                  </li>
-                  <li className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                    <div className="flex w-0 flex-1 items-center">
-                      <PaperClipIcon
-                        className="h-5 w-5 flex-shrink-0 text-gray-400"
-                        aria-hidden="true"
-                      />
-                      <span className="ml-2 w-0 flex-1 truncate">
-                        coverletter_back_end_developer.pdf
-                      </span>
-                    </div>
-                    <div className="ml-4 flex-shrink-0">
-                      <a
-                        href="#"
-                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                        <li className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                          <div className="flex w-0 flex-1 items-center">
+                            <PaperClipIcon
+                              className="h-5 w-5 flex-shrink-0 text-gray-400"
+                              aria-hidden="true"
+                            />
+                            <span className="ml-2 w-0 flex-1 truncate">
+                              book_url.pdf
+                            </span>
+                          </div>
+                          <div className="ml-4 flex-shrink-0">
+                            <a
+                              href={book?.book_url}
+                              className="font-medium text-indigo-600 hover:text-indigo-500"
+                            >
+                              Download
+                            </a>
+                          </div>
+                        </li>
+                      </ul>
+                    </dd>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Book URL / Book file
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                      <ul
+                        role="list"
+                        className="divide-y divide-gray-200 rounded-md border border-gray-200"
                       >
-                        Download
-                      </a>
-                    </div>
-                  </li>
-                </ul>
-              </dd>
-            </div>
-          </dl>
+                        <li className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                          <div className="flex w-0 flex-1 items-center">
+                            <PaperClipIcon
+                              className="h-5 w-5 flex-shrink-0 text-gray-400"
+                              aria-hidden="true"
+                            />
+                            <div>
+                              {/* Tombol Purchase */}
+                              <button
+                                onClick={() => handlePurchase(book.book_id)}
+                                className="font-medium text-indigo-600 hover:text-indigo-500"
+                              >
+                                Purchase (Click to buy)
+                              </button>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </dd>
+                  </div>
+                </>
+              )}
+            </dl>
+          </div>
         </div>
-      </div>
+      ) : (
+        <p>Loading...</p>
+      )}
     </>
   );
 }

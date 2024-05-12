@@ -2,33 +2,31 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { decrypt } from './lib/encrypt'
- 
-// 1. Specify protected and public routes
-const protectedRoutes = ['/api/book', '/api/collection',]
+
+// tabel path
+const protectedRoutes = ['/api/book', '/api/user', '/api/collection', '/dashboard/myBook', '/dashboard/myBook/:id','dashboard/myBook/addBook', '/dashboard/myBook/editBook']
 const publicRoutes = ['/api/login', '/api/register',]
 
 export default async function middleware(req: NextRequest) {
-  console.log("middleware berjalan");
-  // 2. Check if the current route is protected or public
-  const Rawpath =  req.url.split('?')[0];
+  console.log("detecting path: ", req.url.split('?')[0])
+  const Rawpath = req.url.split('?')[0];
   const path = Rawpath.replace(`${process.env.BASE_URL}`, '');
   const isProtectedRoute = protectedRoutes.includes(path)
   const isPublicRoute = publicRoutes.includes(path)
 
-  // 3. Decrypt the session from the  cookie
+  // ambil sesi
   const cookie = cookies().get('session')?.value
   const session = await decrypt(cookie)
-  
-  console.log(isProtectedRoute ,  path)
-  // 5. Redirect to /login if the user is not authenticated
-  if (isProtectedRoute && (typeof(session) == 'undefined')) {
+
+  // login jika sesi tidak ada
+  if (isProtectedRoute && (typeof (session) == 'undefined')) {
     const url = req.nextUrl.clone()
     url.pathname = '/login'
     console.log("diarahkan ke /login;")
     return NextResponse.rewrite(url)
   }
- 
-  // 6. Redirect to /dashboard if the user is authenticated
+
+  // redirect to dashboard jika user sudah login
   if (
     isPublicRoute &&
     session?.userId &&
@@ -40,7 +38,7 @@ export default async function middleware(req: NextRequest) {
   console.log("lolos")
   return NextResponse.next()
 }
- 
+
 // Routes Middleware should not run on
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
