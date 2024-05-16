@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import Swal from "sweetalert2";
 import { FormEvent } from "react";
+import next from "next";
 
 export default function EditBook() {
   const params = useParams<{ id: string }>();

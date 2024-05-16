@@ -216,7 +216,7 @@ export default function BooksPage() {
                           </div>
                           <div className="ml-4 flex-shrink-0">
                             <a
-                              href={book?.book_url}
+                              href={book?.book_url ?? ''}
                               className="font-medium text-indigo-600 hover:text-indigo-500"
                             >
                               Download

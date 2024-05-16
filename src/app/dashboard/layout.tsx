@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
 import Link from "next/link";
+import next from "next";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard/", current: true },

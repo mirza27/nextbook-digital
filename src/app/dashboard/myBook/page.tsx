@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import next from "next";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";

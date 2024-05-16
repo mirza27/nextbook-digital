@@ -3,6 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import Swal from "sweetalert2";
 import { useState, useEffect } from "react";
 import { FormEvent } from "react";
+import next from "next";
 
 export default function AddBook() {
   const [book, setBook] = useState<Book | undefined>();
