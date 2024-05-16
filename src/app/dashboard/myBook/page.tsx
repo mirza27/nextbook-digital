@@ -3,14 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-
-export function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  const options = { year: "numeric", month: "long", day: "numeric" } as const;
-  const formattedDate = date.toLocaleDateString("en-US", options);
-  return formattedDate;
-}
-
+import { formatDate } from "@/lib/time";
 
 
 export default function MyBookPage() {
@@ -274,3 +267,5 @@ export default function MyBookPage() {
     </>
   );
 }
+
+
