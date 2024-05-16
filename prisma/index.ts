@@ -1,6 +1,6 @@
 
 // @ts-nocheck
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../../prisma/generated/client';
 
 let prisma: PrismaClient;
 
