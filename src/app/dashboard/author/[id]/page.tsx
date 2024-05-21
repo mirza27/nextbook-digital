@@ -1,109 +1,270 @@
 "use client";
-import next from "next";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 
-const people = [
+import { formatDate } from "@/lib/time";
+import { UserIcon } from "@heroicons/react/20/solid";
+import { useParams } from "next/navigation";
+import { use, useEffect, useState } from "react";
+
+const eventTypes = {
+  applied: { icon: UserIcon, bgColorClass: "bg-gray-400" },
+};
+const timeline = [
   {
-    name: "Michael Foster",
-    role: "Co-Founder / CTO",
-    imageUrl:
-      "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80",
+    id: 1,
+    type: eventTypes.applied,
+    content: "Applied to",
+    target: "Front End Developer",
+    date: "Sep 20",
+    datetime: "2020-09-20",
   },
-  // More people...
+];
+const books = [
+  {
+    id: 1,
+    name: "title",
+    date: "price",
+    imageId: "1494790108377-be9c29b29330",
+    body: "Ducimus quas delectus ad maxime totam doloribus reiciendis ex. Tempore dolorem maiores. Similique voluptatibus tempore non ut.",
+  },
 ];
 
-export default function AuthorPage() {
+function classNames(...classes: (string | undefined | null | false)[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
+export default function Example() {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [author, setAuthor] = useState<User>();
+  const params = useParams<{ id: string }>();
+
+  const getAuthor = async () => {
+    try {
+      const response = await fetch(`/api/user/${params.id}`);
+      const data = await response.json();
+
+      setAuthor(data.data);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      return [];
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAuthor();
+  }, []);
+
   return (
     <>
-      <header className="mb-2.5">
-        <div>
-          <div>
-            <nav className="sm:hidden" aria-label="Back">
-              <a
-                href="#"
-                className="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700"
-              >
-                <ChevronLeftIcon
-                  className="-ml-1 mr-1 h-5 w-5 flex-shrink-0 text-gray-400"
-                  aria-hidden="true"
-                />
-                Back
-              </a>
-            </nav>
-            <nav className="hidden sm:flex" aria-label="Breadcrumb">
-              <ol role="list" className="flex items-center space-x-4">
-                <li>
-                  <div className="flex">
-                    <a
-                      href="#"
-                      className="text-sm font-medium text-gray-500 hover:text-gray-700"
-                    >
-                      Dashboard
-                    </a>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center">
-                    <ChevronRightIcon
-                      className="h-5 w-5 flex-shrink-0 text-gray-400"
-                      aria-hidden="true"
-                    />
-                    <a
-                      href="#"
-                      className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
-                    >
-                      Authors
-                    </a>
-                  </div>
-                </li>
-              </ol>
-            </nav>
-          </div>
-          <div className="mt-2 md:flex md:items-center md:justify-between">
-            <div className="min-w-0 flex-1">
-              <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                Authors
-              </h2>
+      <div className="min-h-full">
+        <main className="py-10">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
+            <div className="flex items-center space-x-5">
+              <div className="flex-shrink-0">
+                <div className="relative">
+                  <img
+                    className="h-16 w-16 rounded-full"
+                    src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
+                    alt=""
+                  />
+                  <span
+                    className="absolute inset-0 rounded-full shadow-inner"
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {author?.name}
+                </h1>
+                <p className="text-sm font-medium text-gray-500">
+                  Join on <time dateTime="2020-08-25"></time>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
-      <div className="bg-white">
-        <div className="mx-auto max-w-7xl pt-2 pb-12 px-6 text-center lg:px-8 ">
-          <div className="space-y-8 sm:space-y-12">
-            <div className="space-y-5 sm:mx-auto sm:max-w-xl sm:space-y-4 lg:max-w-5xl">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">
-                All of the authors
-              </h2>
-              <p className="text-xl text-gray-500">
-                Risus velit condimentum vitae tincidunt tincidunt. Mauris
-                ridiculus fusce amet urna nunc. Ut nisl ornare diam in.
-              </p>
-            </div>
-            <ul
-              role="list"
-              className="mx-auto grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 md:gap-x-6 lg:max-w-5xl lg:gap-x-8 lg:gap-y-12 xl:grid-cols-6"
-            >
-              {people.map((person) => (
-                <li key={person.name}>
-                  <div className="space-y-4">
-                    <img
-                      className="mx-auto h-20 w-20 rounded-full lg:h-24 lg:w-24"
-                      src={person.imageUrl}
-                      alt=""
-                    />
-                    <div className="space-y-2">
-                      <div className="text-xs font-medium lg:text-sm">
-                        <h3>{person.name}</h3>
-                        <p className="text-indigo-600">{person.role}</p>
+          {isLoading ? (
+            <p className="text-center my-4">Loading...</p>
+          ) : (
+            <div className="mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
+              <div className="space-y-6 lg:col-span-2 lg:col-start-1">
+                {/* Description list*/}
+                <section aria-labelledby="applicant-information-title">
+                  <div className="bg-white shadow sm:rounded-lg">
+                    <div className="px-4 py-5 sm:px-6">
+                      <h2
+                        id="applicant-information-title"
+                        className="text-lg font-medium leading-6 text-gray-900"
+                      >
+                        Author Information
+                      </h2>
+                      <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                        Personal details and application.
+                      </p>
+                    </div>
+                    <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+                      <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                        <div className="sm:col-span-1">
+                          <dt className="text-sm font-medium text-gray-500">
+                            Email
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900">
+                            {author?.email}
+                          </dd>
+                        </div>
+                        <div className="sm:col-span-1">
+                          <dt className="text-sm font-medium text-gray-500">
+                            Book created
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900">
+                            {author?.books.length ?? 0}
+                          </dd>
+                        </div>
+                        <div className="sm:col-span-2">
+                          <dt className="text-sm font-medium text-gray-500">
+                            Bio
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900">
+                            {author?.bio}
+                          </dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Books */}
+                <section aria-labelledby="notes-title">
+                  <div className="bg-white shadow sm:overflow-hidden sm:rounded-lg">
+                    <div className="divide-y divide-gray-200">
+                      <div className="px-4 py-5 sm:px-6">
+                        <h2
+                          id="notes-title"
+                          className="text-lg font-medium text-gray-900"
+                        >
+                          User Books
+                        </h2>
+                      </div>
+                      <div className="px-4 py-6 sm:px-6">
+                        <ul role="list" className="space-y-8">
+                          {author?.books.map((book: Book) => (
+                            <li key={book?.book_id}>
+                              <div className="flex space-x-3">
+                                <div className="flex-shrink-0">
+                                  {book.img_url && (
+                                    <img
+                                      className="aspect-w-0.5 aspect-h-0.5 rounded-lg"
+                                      src={book.img_url}
+                                      alt=""
+                                    />
+                                  )}
+                                </div>
+                                <div>
+                                  <div className="text-sm">
+                                    <a
+                                      href="#"
+                                      className="font-medium text-gray-900"
+                                    >
+                                      {book?.title}
+                                    </a>
+                                  </div>
+                                  <div className="mt-1 text-sm text-gray-700">
+                                    <p>{book?.category?.category_name}</p>
+                                  </div>
+                                  <div className="mt-2 space-x-2 text-sm">
+                                    <span className="font-medium text-gray-500">
+                                      {book?.price}
+                                    </span>{" "}
+                                    <span className="font-medium text-gray-500">
+                                      &middot;
+                                    </span>{" "}
+                                    <button
+                                      type="button"
+                                      className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
+                                    >
+                                      Buy Book
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+                </section>
+              </div>
+
+              <section
+                aria-labelledby="timeline-title"
+                className="lg:col-span-1 lg:col-start-3"
+              >
+                <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
+                  <h2
+                    id="timeline-title"
+                    className="text-lg font-medium text-gray-900"
+                  >
+                    People Who Buy
+                  </h2>
+
+                  {/* Activity Feed */}
+                  <div className="mt-6 flow-root">
+                    <ul role="list" className="-mb-8">
+                      {timeline.map((item, itemIdx) => (
+                        <li key={item.id}>
+                          <div className="relative pb-8">
+                            {itemIdx !== timeline.length - 1 ? (
+                              <span
+                                className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                aria-hidden="true"
+                              />
+                            ) : null}
+                            <div className="relative flex space-x-3">
+                              <div>
+                                <span
+                                  className={classNames(
+                                    item.type.bgColorClass,
+                                    "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
+                                  )}
+                                >
+                                  <item.type.icon
+                                    className="h-5 w-5 text-white"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              </div>
+                              <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                                <div>
+                                  <p className="text-sm text-gray-500">
+                                    {item.content}{" "}
+                                    <a
+                                      href="#"
+                                      className="font-medium text-gray-900"
+                                    >
+                                      {item.target}
+                                    </a>
+                                  </p>
+                                </div>
+                                <div className="whitespace-nowrap text-right text-sm text-gray-500">
+                                  <time dateTime={item.datetime}>
+                                    {item.date}
+                                  </time>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </section>
+            </div>
+          )}
+        </main>
       </div>
     </>
   );

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import Image from "next/image";
 
 function classNames(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(" ");
@@ -95,7 +96,7 @@ export default function Dashboard() {
             <p className="text-center my-4">Loading...</p>
           ) : (
             <div className="-mx-px grid grid-cols-2 border-l border-gray-200 sm:mx-0 md:grid-cols-3 lg:grid-cols-4">
-              {books.map((book: Book) => (
+              {books?.map((book: Book) => (
                 <div
                   key={book.book_id}
                   className="group relative border-r border-b border-gray-200 p-4 sm:p-6"
@@ -104,7 +105,7 @@ export default function Dashboard() {
                     <img
                       src={`https://${book.img_url}`}
                       alt={book.title}
-                      className="h-full w-full object-cover object-center"
+                      className="h-full w-full object-cover object-center sm:h-48"
                     />
                   </div>
                   <div className="pt-10 pb-4 text-center">

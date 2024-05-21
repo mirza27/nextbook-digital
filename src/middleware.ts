@@ -5,18 +5,18 @@ import { decrypt } from './lib/encrypt'
 
 // tabel path
 const protectedRoutes = [
-  '/api/book', '/api/user', '/api/collection',
-  '/dashboard/myBook', '/dashboard/myBook/:id',
-  'dashboard/myBook/addBook', '/dashboard/myBook/editBook'
+  '/api/book', '/api/user', '/api/collection'
 ];
-const publicRoutes = ['/api/login', '/api/register',]
+const publicRoutes = ['/api/login', '/api/register'];
 
 export default async function middleware(req: NextRequest) {
   console.log("detecting path: ", req.url.split('?')[0])
   const Rawpath = req.url.split('?')[0];
   const path = Rawpath.replace(`${process.env.BASE_URL}`, '');
-  const isProtectedRoute = protectedRoutes.includes(path)
-  const isPublicRoute = publicRoutes.includes(path)
+
+  const isProtectedRoute = protectedRoutes.includes(path) || path.startsWith('/dashboard');
+  const isPublicRoute = publicRoutes.includes(path);
+
 
   // ambil sesi
   const cookie = cookies().get('session')?.value

@@ -16,7 +16,6 @@ export default function EditBook() {
       const response = await fetch(`/api/book/${params.id}`);
       const data = await response.json();
       setBook(data.data);
-      
     } catch (error) {
       console.error("Error fetching book:", error);
     } finally {
@@ -138,10 +137,15 @@ export default function EditBook() {
           </div>
         </div>
       </header>
-      {isLoading ? (
+      {!book ? (
         <p className="text-center my-4">Loading...</p>
       ) : (
-        <form className="space-y-6" action="#" method="ATCH" onSubmit={saveBookData}>
+        <form
+          className="space-y-6"
+          action="#"
+          method="ATCH"
+          onSubmit={saveBookData}
+        >
           <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
             <div className="md:grid md:grid-cols-3 md:gap-6">
               <div className="md:col-span-1">
@@ -185,7 +189,7 @@ export default function EditBook() {
                       id="about"
                       name="about"
                       rows={3}
-                      value={book?.desc || ''}
+                      value={book?.desc || ""}
                       onChange={(e) =>
                         setBook({ ...book!, desc: e.target.value })
                       }
@@ -212,7 +216,7 @@ export default function EditBook() {
                         type="text"
                         name="company-website"
                         id="company-website"
-                        value={book!.book_url ?? ''}
+                        value={book!.book_url ?? ""}
                         onChange={(e) =>
                           setBook({ ...book!, book_url: e.target.value })
                         }
@@ -239,7 +243,7 @@ export default function EditBook() {
                         type="text"
                         name="company-website"
                         id="company-website"
-                        value={book!.img_url ?? ''}
+                        value={book!.img_url ?? ""}
                         onChange={(e) =>
                           setBook({ ...book!, img_url: e.target.value })
                         }
@@ -264,7 +268,7 @@ export default function EditBook() {
                     id="email-address"
                     value={book!.price as number}
                     onChange={(e) =>
-                      setBook({ ...book!, price: parseInt(e.target.value)})
+                      setBook({ ...book!, price: parseInt(e.target.value) })
                     }
                     placeholder="60000"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"

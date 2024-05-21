@@ -7,7 +7,7 @@ import next from "next";
 
 export default function AddBook() {
   const [book, setBook] = useState<Book | undefined>();
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<BookCategory[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const addNewBook = async (e: FormEvent<HTMLFormElement>) => {
@@ -164,7 +164,7 @@ export default function AddBook() {
                   <input
                     type="text"
                     name="email-address"
-                    value={book?.title ?? ''}
+                    value={book?.title ?? ""}
                     onChange={(e) =>
                       setBook({ ...book!, title: e.target.value })
                     }
@@ -212,7 +212,7 @@ export default function AddBook() {
                         type="text"
                         name="company-website"
                         id="company-website"
-                        value={book?.book_url ?? ''}
+                        value={book?.book_url ?? ""}
                         onChange={(e) =>
                           setBook({ ...book!, book_url: e.target.value })
                         }

@@ -126,11 +126,11 @@ export default function MyBookPage() {
                 </div>
               </div>
 
-              {isLoading ? (
+              {!mybooks ? (
                 <p className="text-center my-4">Loading...</p>
               ) : (
                 <div className="mt-6 -mb-6 flow-root divide-y divide-gray-200 border-t border-gray-200">
-                  {mybooks.map((book: Book) => (
+                  {mybooks?.map((book: Book) => (
                     <div key={book.book_id} className="py-6 sm:flex">
                       <div className="flex space-x-4 sm:min-w-0 sm:flex-1 sm:space-x-6 lg:space-x-8">
                         <img
@@ -211,11 +211,11 @@ export default function MyBookPage() {
                 </div>
               </div>
 
-              {isLoading ? (
+              {!collection ? (
                 <p className="text-center my-4">Loading...</p>
               ) : (
                 <div className="mt-6 -mb-6 flow-root divide-y divide-gray-200 border-t border-gray-200">
-                  {collection.map((book: Collection) => (
+                  {collection?.map((book: Collection) => (
                     <div key={book.book_id} className="py-6 sm:flex">
                       <div className="flex space-x-4 sm:min-w-0 sm:flex-1 sm:space-x-6 lg:space-x-8">
                         <img

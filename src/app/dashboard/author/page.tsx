@@ -1,18 +1,28 @@
 "use client";
 import next from "next";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-
-const people = [
-  {
-    name: "Michael Foster",
-    role: "Co-Founder / CTO",
-    imageUrl:
-      "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80",
-  },
-  // More people...
-];
+import { useEffect, useState } from "react";
 
 export default function AuthorPage() {
+  const [authors, setAuthors] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const getAuthors = async () => {
+    try {
+      const response = await fetch("/api/author");
+      const data = await response.json();
+      setAuthors(data.data);
+      console.log(data.data);
+    } catch (error) {
+      console.error("Error fetching authors:", error);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getAuthors();
+  }, []);
+
   return (
     <>
       <header className="mb-2.5">
@@ -68,43 +78,52 @@ export default function AuthorPage() {
           </div>
         </div>
       </header>
-      <div className="bg-white">
-        <div className="mx-auto max-w-7xl pt-2 pb-12 px-6 text-center lg:px-8 ">
-          <div className="space-y-8 sm:space-y-12">
-            <div className="space-y-5 sm:mx-auto sm:max-w-xl sm:space-y-4 lg:max-w-5xl">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">
-                All of the authors
-              </h2>
-              <p className="text-xl text-gray-500">
-                Risus velit condimentum vitae tincidunt tincidunt. Mauris
-                ridiculus fusce amet urna nunc. Ut nisl ornare diam in.
-              </p>
-            </div>
-            <ul
-              role="list"
-              className="mx-auto grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 md:gap-x-6 lg:max-w-5xl lg:gap-x-8 lg:gap-y-12 xl:grid-cols-6"
-            >
-              {people.map((person) => (
-                <li key={person.name}>
-                  <div className="space-y-4">
-                    <img
-                      className="mx-auto h-20 w-20 rounded-full lg:h-24 lg:w-24"
-                      src={person.imageUrl}
-                      alt=""
-                    />
-                    <div className="space-y-2">
-                      <div className="text-xs font-medium lg:text-sm">
-                        <h3>{person.name}</h3>
-                        <p className="text-indigo-600">{person.role}</p>
+      {isLoading ? (
+        <p className="text-center my-4">Loading...</p>
+      ) : (
+        <div className="bg-white">
+          <div className="mx-auto max-w-7xl pt-2 pb-12 px-6 text-center lg:px-8 ">
+            <div className="space-y-8 sm:space-y-12">
+              <div className="space-y-5 sm:mx-auto sm:max-w-xl sm:space-y-4 lg:max-w-5xl">
+                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900">
+                  All of the authors
+                </h2>
+                <p className="text-xl text-gray-500">Find your best author</p>
+              </div>
+              <ul
+                role="list"
+                className="mx-auto grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 md:gap-x-6 lg:max-w-5xl lg:gap-x-8 lg:gap-y-12 xl:grid-cols-6"
+              >
+                {authors?.map((author: User) => (
+                  <li key={author.user_id}>
+                    <div
+                      className="space-y-4"
+                      onClick={() =>
+                        (window.location.href = `/dashboard/author/${author.user_id}`)
+                      }
+                    >
+                      <img
+                        className="mx-auto h-20 w-20 rounded-full lg:h-24 lg:w-24"
+                        src="https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
+                        alt=""
+                      />
+                      <div className="space-y-2">
+                        <div className="text-xs font-medium lg:text-sm">
+                          <h3>{author.name}</h3>
+                          <p className="text-indigo-600">
+                            {author.bio}
+                            {author.books?.length ?? 0}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

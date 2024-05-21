@@ -6,16 +6,14 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
 import Link from "next/link";
 import next from "next";
+import { useRouter } from "next/navigation";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard/", current: true },
   { name: "Authors", href: "/dashboard/author", current: false },
   { name: "My Book", href: "/dashboard/myBook", current: false },
 ];
-const userNavigation = [
-  { name: "Your Profile", href: "/dashboard/profile" },
-  { name: "Sign out" },
-];
+const userNavigation = [{ name: "Your Profile", href: "/dashboard/profile" }];
 
 function classNames(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(" ");
@@ -23,6 +21,7 @@ function classNames(...classes: (string | undefined | null | false)[]) {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | undefined>();
+  const router = useRouter();
 
   const getUserProfile = async () => {
     try {
@@ -32,6 +31,33 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.log(error);
       Swal.fire("Error!", "You Have to login first!", "error");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        setUser(undefined);
+        Swal.fire(
+          "Logged out",
+          "You have been logged out successfully",
+          "success"
+        ).then(() => {
+          router.push("/login");
+        });
+      } else {
+        Swal.fire("Error", "Failed to log out", "error");
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+      Swal.fire("Error", "Failed to log out", "error");
     }
   };
 
@@ -121,6 +147,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                         )}
                                       </Menu.Item>
                                     ))}
+                                    <Menu.Item>
+                                      {({ active }) => (
+                                        <button
+                                          onClick={handleLogout}
+                                          className={classNames(
+                                            active ? "bg-gray-100" : "",
+                                            "block w-full text-left px-4 py-2 text-sm text-gray-700"
+                                          )}
+                                        >
+                                          Sign out
+                                        </button>
+                                      )}
+                                    </Menu.Item>
                                   </Menu.Items>
                                 </Transition>
                               </Menu>

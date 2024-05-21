@@ -64,6 +64,7 @@ export default function UserProfile() {
 
   useEffect(() => {
     getUserProfile();
+    setIsLoading(false);
   }, []);
 
   return (
@@ -122,127 +123,132 @@ export default function UserProfile() {
         </div>
       </header>
 
-      {isLoading ? (
+      {isLoading || !user ? (
         <p className="text-center my-4">Loading...</p>
       ) : (
-      <form className="space-y-6" action="#" method="PATCH" onSubmit={saveProfileData}>
-        <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-          <div className="md:grid md:grid-cols-3 md:gap-6">
-            <div className="md:col-span-1">
-              <h3 className="text-lg font-medium leading-6 text-gray-900">
-                Personal Information
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Update your personal information
-              </p>
-            </div>
-            <div className="mt-5 md:col-span-2 md:mt-0">
-              <div className="grid grid-cols-6 gap-6">
-                <div className="col-span-6 sm:col-span-3">
-                  <label
-                    htmlFor="first-name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Your Name
-                  </label>
-                  <input
-                    type="text"
-                    name="first-name"
-                    id="first-name"
-                    value={user!.name}
-                    onChange={(e) =>
-                      setUser({ ...user!, name: e.target.value })
-                    }
-                    autoComplete="given-name"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  />
-                </div>
-
-                <div className="col-span-6 sm:col-span-4">
-                  <label
-                    htmlFor="email-address"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Email address
-                  </label>
-                  <input
-                    type="text"
-                    name="email-address"
-                    id="email-address"
-                    value={user!.email}
-                    onChange={(e) =>
-                      setUser({ ...user!, email: e.target.value })
-                    }
-                    autoComplete="email"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  />
-                </div>
-
-                <div className="col-span-6 sm:col-span-3">
-                  <label
-                    htmlFor="about"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Bio
-                  </label>
-                  <div className="mt-1">
-                    <textarea
-                      id="about"
-                      name="about"
-                      value={user!.bio ?? ''}
+        <form
+          className="space-y-6"
+          action="#"
+          method="PATCH"
+          onSubmit={saveProfileData}
+        >
+          <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
+            <div className="md:grid md:grid-cols-3 md:gap-6">
+              <div className="md:col-span-1">
+                <h3 className="text-lg font-medium leading-6 text-gray-900">
+                  Personal Information
+                </h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Update your personal information
+                </p>
+              </div>
+              <div className="mt-5 md:col-span-2 md:mt-0">
+                <div className="grid grid-cols-6 gap-6">
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      htmlFor="first-name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      name="first-name"
+                      id="first-name"
+                      value={user!.name}
                       onChange={(e) =>
-                        setUser({ ...user!, bio: e.target.value! })
+                        setUser({ ...user!, name: e.target.value })
                       }
-                      rows={3}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                      placeholder="Write something about yourself"
-                      defaultValue={""}
+                      autoComplete="given-name"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Brief description for your profile. URLs are hyperlinked.
-                  </p>
-                </div>
 
-                <div className="col-span-6">
-                  <label
-                    htmlFor="postal-code"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Your Credit
-                  </label>
-                  <input
-                    type="number"
-                    name="postal-code"
-                    id="postal-code"
-                    value={user!.credit}
-                    onChange={(e) =>
-                      setUser({ ...user!, credit: parseInt(e.target.value) })
-                    }
-                    autoComplete="postal-code"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  />
+                  <div className="col-span-6 sm:col-span-4">
+                    <label
+                      htmlFor="email-address"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Email address
+                    </label>
+                    <input
+                      type="text"
+                      name="email-address"
+                      id="email-address"
+                      value={user!.email}
+                      onChange={(e) =>
+                        setUser({ ...user!, email: e.target.value })
+                      }
+                      autoComplete="email"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
+                  </div>
+
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      htmlFor="about"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Bio
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="about"
+                        name="about"
+                        value={user!.bio ?? ""}
+                        onChange={(e) =>
+                          setUser({ ...user!, bio: e.target.value! })
+                        }
+                        rows={3}
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        placeholder="Write something about yourself"
+                        defaultValue={""}
+                      />
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Brief description for your profile. URLs are hyperlinked.
+                    </p>
+                  </div>
+
+                  <div className="col-span-6">
+                    <label
+                      htmlFor="postal-code"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Your Credit
+                    </label>
+                    <input
+                      type="number"
+                      name="postal-code"
+                      id="postal-code"
+                      value={user!.credit}
+                      onChange={(e) =>
+                        setUser({ ...user!, credit: parseInt(e.target.value) })
+                      }
+                      autoComplete="postal-code"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex justify-end">
-          <button
-            type="button"
-            className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            Save
-          </button>
-        </div>
-      </form>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              Save
+            </button>
+          </div>
+        </form>
       )}
     </>
   );
