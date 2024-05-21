@@ -25,7 +25,7 @@ export async function GET(request: Request, { params }: { params: Params }) {
             });
         }
 
-        const author: User = await prisma.user.findUnique({
+        const author = await prisma.user.findUnique({
             where: {
                 user_id: author_id
             }, include: {
