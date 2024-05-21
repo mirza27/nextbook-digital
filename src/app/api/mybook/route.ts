@@ -7,7 +7,7 @@ export async function GET() {
     const session = await getSession();
 
     try {
-        const books: Book[] = await prisma.book.findMany({
+        const books = await prisma.book.findMany({
             where: {
                 user_id: parseInt(session?.userId as string),
             }

@@ -4,7 +4,11 @@ import { cookies } from 'next/headers'
 import { decrypt } from './lib/encrypt'
 
 // tabel path
-const protectedRoutes = ['/api/book', '/api/user', '/api/collection', '/dashboard/myBook', '/dashboard/myBook/:id','dashboard/myBook/addBook', '/dashboard/myBook/editBook']
+const protectedRoutes = [
+  '/api/book', '/api/user', '/api/collection',
+  '/dashboard/myBook', '/dashboard/myBook/:id',
+  'dashboard/myBook/addBook', '/dashboard/myBook/editBook'
+];
 const publicRoutes = ['/api/login', '/api/register',]
 
 export default async function middleware(req: NextRequest) {
@@ -41,5 +45,5 @@ export default async function middleware(req: NextRequest) {
 
 // Routes Middleware should not run on
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$|https?:\\/\\/).*)'],
 }

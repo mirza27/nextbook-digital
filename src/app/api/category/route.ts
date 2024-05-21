@@ -5,10 +5,12 @@ import prisma from '../../../../prisma';
 // get all categories
 export async function GET() {
     try {
-        const categories: BookCategory[] = await prisma.bookCategory.findMany(
-            {include : {
-                books: true
-            }}
+        const categories = await prisma.bookCategory.findMany(
+            {
+                include: {
+                    books: true
+                }
+            }
         );
 
         return NextResponse.json(

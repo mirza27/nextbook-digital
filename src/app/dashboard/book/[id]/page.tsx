@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { PaperClipIcon } from "@heroicons/react/20/solid";
 import Swal from "sweetalert2";
+import Link from "next/link";
 
 export default function BooksPage() {
   const params = useParams<{ id: string }>();
@@ -215,12 +216,15 @@ export default function BooksPage() {
                             </span>
                           </div>
                           <div className="ml-4 flex-shrink-0">
-                            <a
-                              href={book?.book_url ?? ''}
-                              className="font-medium text-indigo-600 hover:text-indigo-500"
+                            <Link
+                              href={"https://" + book?.book_url ?? ""}
+                              target="_blank"
                             >
-                              Download
-                            </a>
+                              {" "}
+                              <p className="font-medium text-indigo-600 hover:text-indigo-500">
+                                Download
+                              </p>
+                            </Link>
                           </div>
                         </li>
                       </ul>

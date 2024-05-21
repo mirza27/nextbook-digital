@@ -8,7 +8,7 @@ export async function GET() {
     const session = await getSession();
 
     try {
-        const collection: Collection[] = await prisma.collection.findMany({
+        const collection = await prisma.collection.findMany({
             where: {
                 user: {
                     user_id: parseInt(session?.userId as string),
@@ -68,13 +68,13 @@ export async function POST(request: Request) {
         }
 
 
-        const user: User | null = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: {
                 user_id: parseInt(session?.userId as string)
             },
         })
 
-        const book: Book = await prisma.book.findUnique({
+        const book = await prisma.book.findUnique({
             where: {
                 book_id: book_id,
 
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
         });
 
         // jika buku user sendiri
-        if (user!.user_id == book.user_id) {
+        if (user!.user_id == book!.user_id) {
             return NextResponse.json(
                 {
                     success: false,
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
         }
 
 
-        if (user!.credit < book.price) {
+        if (user!.credit < book!.price) {
             return NextResponse.json(
                 {
                     success: false,
@@ -111,7 +111,7 @@ export async function POST(request: Request) {
             );
         } else {
             // tambah ke koleksi user
-            const collection: Collection = await prisma.collection.create({
+            const collection = await prisma.collection.create({
 
 
                 data: {
@@ -134,17 +134,17 @@ export async function POST(request: Request) {
                     user_id: parseInt(session?.userId as string)
                 },
                 data: {
-                    credit: user!.credit - book.price
+                    credit: user!.credit - book!.price
                 }
             });
 
             // update author credit
             await prisma.user.update({
                 where: {
-                    user_id: book.user_id
+                    user_id: book!.user_id
                 },
                 data: {
-                    credit: book.user.credit + book.price
+                    credit: book!.user.credit + book!.price
                 }
             });
         }

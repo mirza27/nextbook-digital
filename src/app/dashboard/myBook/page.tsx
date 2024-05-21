@@ -6,13 +6,12 @@ import { useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { formatDate } from "@/lib/time";
 
-
 export default function MyBookPage() {
   const [mybooks, setMyBooks] = useState([]);
   const [collection, setCollection] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
-  
+
   function handleRedirect(url: string) {
     window.location.href = url;
   }
@@ -44,6 +43,7 @@ export default function MyBookPage() {
   useEffect(() => {
     getMyBook();
     getMyCollections();
+    setIsLoading(false);
   }, []);
 
   return (
@@ -162,7 +162,9 @@ export default function MyBookPage() {
                         </div>
                       </div>
                       <div className="mt-6 space-y-4 sm:mt-0 sm:ml-6 sm:w-40 sm:flex-none">
-                        <Link href={`/dashboard/myBook/editBook/${book.book_id}`}>
+                        <Link
+                          href={`/dashboard/myBook/editBook/${book.book_id}`}
+                        >
                           <button
                             type="button"
                             className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-2.5 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-full sm:flex-grow-0"
@@ -268,5 +270,3 @@ export default function MyBookPage() {
     </>
   );
 }
-
-

@@ -1,5 +1,5 @@
 "use client";
-import next from "next";
+
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
@@ -17,6 +17,7 @@ export default function Dashboard() {
       const response = await fetch("/api/book");
       const data = await response.json();
       setBooks(data.data);
+      console.log(data.data);
     } catch (error) {
       console.error("Error fetching books:", error);
       return [];
@@ -27,6 +28,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     getAllBooks();
+    setIsLoading(false);
   }, []);
 
   return (
@@ -89,7 +91,6 @@ export default function Dashboard() {
       <div className="bg-white">
         <div className="mx-auto max-w-7xl overflow-hidden sm:px-6 lg:px-8">
           <h2 className="sr-only">Books</h2>
-
           {isLoading ? (
             <p className="text-center my-4">Loading...</p>
           ) : (

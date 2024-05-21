@@ -6,12 +6,13 @@ import { getSession } from "@/lib/session";
 // GET all books
 export async function GET() {
     try {
-        const books: Book[] = await prisma.book.findMany({
+        const books = await prisma.book.findMany({
             include: {
                 category: true,
                 user: true,
             }
         });
+        console.log(books)
 
         return NextResponse.json(
             {
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
     const session = await getSession();
 
     try {
-        const newBook: Book  = await prisma.book.create({
+        const newBook = await prisma.book.create({
             data: {
                 title: title,
                 desc: description,
