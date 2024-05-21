@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const session = await getSession();
 
     try {
-        const user: User = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: {
                 user_id: parseInt(session?.userId as string),
             }
