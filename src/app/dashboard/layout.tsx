@@ -14,7 +14,7 @@ const navigation = [
 ];
 const userNavigation = [
   { name: "Your Profile", href: "/dashboard/profile" },
-  { name: "Sign out", },
+  { name: "Sign out" },
 ];
 
 function classNames(...classes: (string | undefined | null | false)[]) {
@@ -205,9 +205,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <main className="-mt-32">
           <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
             {/* Replace with your content */}
-            <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
-              {children}
-            </div>
+            <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6"></div>
             {/* /End replace */}
           </div>
         </main>
