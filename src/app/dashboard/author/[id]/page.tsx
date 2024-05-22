@@ -41,7 +41,7 @@ export default function Example() {
 
   const getAuthor = async () => {
     try {
-      const response = await fetch(`/api/user/${params.id}`);
+      const response = await fetch(`/api/author/${params.id}`);
       const data = await response.json();
       setAuthor(data.data);
       setBuyedUser(data.userBuyed);
