@@ -47,6 +47,10 @@ export async function GET(request: Request, { params }: { params: Params }) {
             },
             include: {
                 user: true,
+            },
+            take: 3, // Batasi hasil hingga 3
+            orderBy: {
+                createdAt: 'desc' // Urutkan hasil dari yang terbaru
             }
         });
 
