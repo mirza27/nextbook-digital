@@ -33,6 +33,7 @@ function classNames(...classes: (string | undefined | null | false)[]) {
 }
 
 export default function Example() {
+  const specificEventType = eventTypes.applied;
   const params = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [author, setAuthor] = useState<User>();
@@ -232,15 +233,12 @@ export default function Example() {
                             ) : null}
                             <div className="relative flex space-x-3">
                               <div>
-                                <span
-                                  className={classNames(
-                                    "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
-                                  )}
-                                >
-                                  {/* <eventTypes.applied
-                                    className="h-5 w-5 text-white"
-                                    aria-hidden="true"
-                                  /> */}
+                                <span>
+                                  <img
+                                    className="h-8 w-8 rounded-full"
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqIcU3viBYjZFG-QKpWRF0_wusCpjEhVBg8TanplfNKg&s"
+                                    alt=""
+                                  />
                                 </span>
                               </div>
                               <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
@@ -250,9 +248,7 @@ export default function Example() {
                                     <a
                                       href="#"
                                       className="font-medium text-gray-900"
-                                    >
-                                      {collection.book.title}
-                                    </a>
+                                    ></a>
                                   </p>
                                 </div>
                                 <div className="whitespace-nowrap text-right text-sm text-gray-500">

@@ -111,8 +111,7 @@ export default function AuthorPage() {
                         <div className="text-xs font-medium lg:text-sm">
                           <h3>{author.name}</h3>
                           <p className="text-indigo-600">
-                            {author.bio}
-                            {author.books?.length ?? 0}
+                            {author.bio?.slice(0, 25)}...
                           </p>
                         </div>
                       </div>
