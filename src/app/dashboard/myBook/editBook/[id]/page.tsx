@@ -1,5 +1,5 @@
 "use client";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import Swal from "sweetalert2";
@@ -10,14 +10,31 @@ export default function EditBook() {
   const params = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [book, setBook] = useState<Book | undefined>();
+  const [categories, setCategories] = useState<BookCategory[]>([]);
+  const [choosedCategory, setChoosedCategory] = useState<string>("");
+  const router = useRouter();
 
   const getBookData = async () => {
     try {
       const response = await fetch(`/api/book/${params.id}`);
       const data = await response.json();
       setBook(data.data);
+      setChoosedCategory(data.data.book_category_id);
     } catch (error) {
       console.error("Error fetching book:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getCategories = async () => {
+    try {
+      const response = await fetch("/api/category");
+      const data = await response.json();
+      setCategories(data.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return [];
     } finally {
       setIsLoading(false);
     }
@@ -41,7 +58,7 @@ export default function EditBook() {
           img_url: book.img_url,
           book_url: book.book_url,
           price: book.price,
-          book_category_id: book.book_category_id,
+          book_category_id: parseInt(choosedCategory),
         }),
       });
       const data = await response.json();
@@ -51,6 +68,8 @@ export default function EditBook() {
           title: "Success",
           text: data.message,
         });
+
+        router.push("/dashboard/myBook");
       } else {
         throw new Error(data.message);
       }
@@ -65,6 +84,7 @@ export default function EditBook() {
   };
 
   useEffect(() => {
+    getCategories();
     getBookData();
   }, []);
 
@@ -283,14 +303,23 @@ export default function EditBook() {
                     Book Categories
                   </label>
                   <select
-                    id="country"
-                    name="country"
-                    autoComplete="country-name"
+                    id="category"
+                    name="category"
+                    value={choosedCategory}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      setChoosedCategory(e.target.value)
+                    }
+                    autoComplete="category-name"
                     className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   >
-                    <option>United States</option>
-                    <option>Canada</option>
-                    <option>Mexico</option>
+                    {categories.map((category: BookCategory) => (
+                      <option
+                        key={category.book_category_id}
+                        value={category.book_category_id}
+                      >
+                        {category.category_name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

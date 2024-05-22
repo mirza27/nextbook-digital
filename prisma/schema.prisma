@@ -21,6 +21,7 @@ model Book {
   img_url          String?
   book_url         String?
   price            Int
+  is_active        Boolean   @default(true)
   user             User          @relation(fields: [user_id], references: [user_id])
   user_id          Int
   category         BookCategory  @relation(fields: [book_category_id], references: [book_category_id])
@@ -42,6 +43,7 @@ model User {
   credit    Int
   books     Book[]
   collections  Collection[]
+  createdAt        DateTime  @default(now())
 
   @@map("users")
 }

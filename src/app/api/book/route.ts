@@ -10,9 +10,9 @@ export async function GET() {
             include: {
                 category: true,
                 user: true,
+
             }
         });
-        console.log(books)
 
         return NextResponse.json(
             {

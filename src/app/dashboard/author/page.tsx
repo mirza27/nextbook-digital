@@ -2,17 +2,17 @@
 import next from "next";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AuthorPage() {
   const [authors, setAuthors] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
+  const router = useRouter();
   const getAuthors = async () => {
     try {
       const response = await fetch("/api/author");
       const data = await response.json();
       setAuthors(data.data);
-      console.log(data.data);
     } catch (error) {
       console.error("Error fetching authors:", error);
     }
@@ -99,12 +99,12 @@ export default function AuthorPage() {
                     <div
                       className="space-y-4"
                       onClick={() =>
-                        (window.location.href = `/dashboard/author/${author.user_id}`)
+                        router.push(`/dashboard/author/${author.user_id}`)
                       }
                     >
                       <img
                         className="mx-auto h-20 w-20 rounded-full lg:h-24 lg:w-24"
-                        src="https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqIcU3viBYjZFG-QKpWRF0_wusCpjEhVBg8TanplfNKg&s"
                         alt=""
                       />
                       <div className="space-y-2">

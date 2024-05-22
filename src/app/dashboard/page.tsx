@@ -18,7 +18,6 @@ export default function Dashboard() {
       const response = await fetch("/api/book");
       const data = await response.json();
       setBooks(data.data);
-      console.log(data.data);
     } catch (error) {
       console.error("Error fetching books:", error);
       return [];

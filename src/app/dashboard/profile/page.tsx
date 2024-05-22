@@ -4,16 +4,19 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { FormEvent } from "react";
 import next from "next";
+import { useRouter } from "next/navigation";
 
 export default function UserProfile() {
   const [user, setUser] = useState<User | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const router = useRouter();
 
   const getUserProfile = async () => {
     try {
       const response = await fetch("/api/user");
       const data = await response.json();
       setUser(data.user);
+      // router.push("/dashboard");
     } catch (error) {
       console.log(error);
       return [];

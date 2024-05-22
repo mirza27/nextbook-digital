@@ -2,7 +2,7 @@
 
 import { formatDate } from "@/lib/time";
 import { UserIcon } from "@heroicons/react/20/solid";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 
 const eventTypes = {
@@ -33,27 +33,27 @@ function classNames(...classes: (string | undefined | null | false)[]) {
 }
 
 export default function Example() {
+  const params = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [author, setAuthor] = useState<User>();
-  const params = useParams<{ id: string }>();
+  const [buyedUser, setBuyedUser] = useState<Collection[]>([]);
+  const router = useRouter();
 
   const getAuthor = async () => {
     try {
       const response = await fetch(`/api/user/${params.id}`);
       const data = await response.json();
-
       setAuthor(data.data);
-      console.log(response);
+      setBuyedUser(data.userBuyed);
     } catch (error) {
       console.log(error);
       return [];
-    } finally {
-      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     getAuthor();
+    setIsLoading(false);
   }, []);
 
   return (
@@ -66,7 +66,7 @@ export default function Example() {
                 <div className="relative">
                   <img
                     className="h-16 w-16 rounded-full"
-                    src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqIcU3viBYjZFG-QKpWRF0_wusCpjEhVBg8TanplfNKg&s"
                     alt=""
                   />
                   <span
@@ -80,7 +80,10 @@ export default function Example() {
                   {author?.name}
                 </h1>
                 <p className="text-sm font-medium text-gray-500">
-                  Join on <time dateTime="2020-08-25"></time>
+                  Join on{" "}
+                  <time dateTime="2020-08-25">
+                    {formatDate(author?.createdAt.toLocaleString() ?? "")}
+                  </time>
                 </p>
               </div>
             </div>
@@ -155,8 +158,8 @@ export default function Example() {
                                 <div className="flex-shrink-0">
                                   {book.img_url && (
                                     <img
-                                      className="aspect-w-0.5 aspect-h-0.5 rounded-lg"
-                                      src={book.img_url}
+                                      className="h-40 w-40 rounded-lg"
+                                      src={`https://${book.img_url}`}
                                       alt=""
                                     />
                                   )}
@@ -181,6 +184,11 @@ export default function Example() {
                                       &middot;
                                     </span>{" "}
                                     <button
+                                      onClick={() =>
+                                        router.push(
+                                          `/dashboard/book/${book?.book_id}`
+                                        )
+                                      }
                                       type="button"
                                       className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
                                     >
@@ -213,8 +221,8 @@ export default function Example() {
                   {/* Activity Feed */}
                   <div className="mt-6 flow-root">
                     <ul role="list" className="-mb-8">
-                      {timeline.map((item, itemIdx) => (
-                        <li key={item.id}>
+                      {buyedUser.map((collection, itemIdx) => (
+                        <li key={collection.id}>
                           <div className="relative pb-8">
                             {itemIdx !== timeline.length - 1 ? (
                               <span
@@ -226,31 +234,34 @@ export default function Example() {
                               <div>
                                 <span
                                   className={classNames(
-                                    item.type.bgColorClass,
                                     "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
                                   )}
                                 >
-                                  <item.type.icon
+                                  {/* <eventTypes.applied
                                     className="h-5 w-5 text-white"
                                     aria-hidden="true"
-                                  />
+                                  /> */}
                                 </span>
                               </div>
                               <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
                                 <div>
                                   <p className="text-sm text-gray-500">
-                                    {item.content}{" "}
+                                    {collection.user.name}{" "}
                                     <a
                                       href="#"
                                       className="font-medium text-gray-900"
                                     >
-                                      {item.target}
+                                      {collection.book.title}
                                     </a>
                                   </p>
                                 </div>
                                 <div className="whitespace-nowrap text-right text-sm text-gray-500">
-                                  <time dateTime={item.datetime}>
-                                    {item.date}
+                                  <time
+                                    dateTime={formatDate(
+                                      collection.updatedAt.toLocaleString()
+                                    )}
+                                  >
+                                    {/* {item.date} */}
                                   </time>
                                 </div>
                               </div>

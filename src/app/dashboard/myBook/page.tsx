@@ -172,14 +172,15 @@ export default function MyBookPage() {
                             Edit
                           </button>
                         </Link>
-
-                        <button
-                          type="button"
-                          className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white py-2 px-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-full sm:flex-grow-0"
-                          onClick={() => handleRedirect(`/${book.book_url}`)}
-                        >
-                          Read Book
-                        </button>
+                        <Link href={"" + book?.book_url ?? ""} target="_blank">
+                          <button
+                            type="button"
+                            className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white py-2 px-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-full sm:flex-grow-0"
+                            // onClick={() => handleRedirect(`/${book.book_url}`)}
+                          >
+                            Read Book
+                          </button>
+                        </Link>
                       </div>
                     </div>
                   ))}

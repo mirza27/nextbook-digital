@@ -4,11 +4,20 @@ import Swal from "sweetalert2";
 import { useState, useEffect } from "react";
 import { FormEvent } from "react";
 import next from "next";
+import { useRouter } from "next/navigation";
 
 export default function AddBook() {
   const [book, setBook] = useState<Book | undefined>();
   const [categories, setCategories] = useState<BookCategory[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const router = useRouter();
+
+  const addHttp = (url: string) => {
+    if (!/^https?:\/\//i.test(url)) {
+      return "http://" + url;
+    }
+    return url;
+  };
 
   const addNewBook = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,7 +35,7 @@ export default function AddBook() {
           title: book.title,
           description: book.desc,
           img_url: book.img_url,
-          book_url: book.book_url,
+          book_url: addHttp(book.book_url as string),
           price: book.price,
           book_category_id: book.book_category_id,
         }),
@@ -38,6 +47,8 @@ export default function AddBook() {
           title: "Success",
           text: data.message,
         });
+
+        router.push("/dashboard/myBook");
       } else {
         throw new Error(data.message);
       }

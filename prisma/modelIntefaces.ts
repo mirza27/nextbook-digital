@@ -4,6 +4,7 @@ interface Book {
     title: string;
     desc?: string | null;
     img_url: string | null;
+    is_active: boolean | true;
     book_url?: string | null;
     price: number;
     user: User;
@@ -23,6 +24,7 @@ interface User {
     bio?: string | null;
     credit: number;
     books: Book[];
+    createdAt: Date;
 }
 
 // Collection model interface

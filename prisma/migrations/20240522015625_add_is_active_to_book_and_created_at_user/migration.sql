@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "books" ADD COLUMN     "is_active" BOOLEAN NOT NULL DEFAULT true;
+
+-- AlterTable
+ALTER TABLE "users" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

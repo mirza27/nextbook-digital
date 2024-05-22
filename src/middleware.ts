@@ -21,6 +21,7 @@ export default async function middleware(req: NextRequest) {
   // ambil sesi
   const cookie = cookies().get('session')?.value
   const session = await decrypt(cookie)
+  console.log("using session : ", session)
 
   // login jika sesi tidak ada
   if (isProtectedRoute && (typeof (session) == 'undefined')) {

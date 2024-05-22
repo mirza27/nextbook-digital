@@ -224,12 +224,11 @@ export default function BooksPage() {
                           </div>
                           <div className="ml-4 flex-shrink-0">
                             <Link
-                              href={"https://" + book?.book_url ?? ""}
+                              href={"" + book?.book_url ?? ""}
                               target="_blank"
                             >
-                              {" "}
                               <p className="font-medium text-indigo-600 hover:text-indigo-500">
-                                Download
+                                Read Book
                               </p>
                             </Link>
                           </div>
