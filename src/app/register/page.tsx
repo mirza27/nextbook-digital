@@ -1,5 +1,5 @@
 "use client";
-
+import { LockClosedIcon } from "@heroicons/react/20/solid";
 import { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
@@ -10,6 +10,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const validateEmail = (email: string) => {
@@ -24,6 +25,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (!validateEmail(email)) {
       Swal.fire({
@@ -98,6 +100,8 @@ export default function RegisterPage() {
         title: "Terjadi kesalahan",
         text: "Terjadi kesalahan saat memproses permintaan Anda.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -242,9 +246,41 @@ export default function RegisterPage() {
                   <div>
                     <button
                       type="submit"
-                      className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      className={`group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                        isLoading ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                      disabled={isLoading}
                     >
-                      Sign Up
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        {isLoading ? (
+                          <svg
+                            className="h-5 w-5 text-indigo-500 animate-spin"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8v8H4z"
+                            ></path>
+                          </svg>
+                        ) : (
+                          <LockClosedIcon
+                            className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </span>
+                      {isLoading ? "Loading..." : "Sign Up"}
                     </button>
                   </div>
                 </form>

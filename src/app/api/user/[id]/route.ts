@@ -16,6 +16,7 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
         email,
         bio,
         credit,
+        img_url
     } = await request.json();
 
     try {
@@ -41,6 +42,7 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
                 email,
                 bio,
                 credit,
+                img_url,
             }
         });
 

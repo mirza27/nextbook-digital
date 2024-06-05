@@ -126,7 +126,7 @@ export default function MyBookPage() {
                 </div>
               </div>
 
-              {!mybooks ? (
+              {isLoading ? (
                 <p className="text-center my-4">Loading...</p>
               ) : (
                 <div className="mt-6 -mb-6 flow-root divide-y divide-gray-200 border-t border-gray-200">
@@ -212,7 +212,7 @@ export default function MyBookPage() {
                 </div>
               </div>
 
-              {!collection ? (
+              {isLoading ? (
                 <p className="text-center my-4">Loading...</p>
               ) : (
                 <div className="mt-6 -mb-6 flow-root divide-y divide-gray-200 border-t border-gray-200">

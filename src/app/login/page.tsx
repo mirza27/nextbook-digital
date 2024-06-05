@@ -8,10 +8,12 @@ import Swal from "sweetalert2";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await fetch("/api/login", {
         method: "POST",
@@ -63,6 +65,8 @@ export default function LoginPage() {
         title: "Terjadi kesalahan",
         text: "Terjadi kesalahan saat memproses permintaan Anda.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -134,15 +138,41 @@ export default function LoginPage() {
             <div>
               <button
                 type="submit"
-                className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className={`group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                  isLoading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={isLoading}
               >
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <LockClosedIcon
-                    className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-                    aria-hidden="true"
-                  />
+                  {isLoading ? (
+                    <svg
+                      className="h-5 w-5 text-indigo-500 animate-spin"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8H4z"
+                      ></path>
+                    </svg>
+                  ) : (
+                    <LockClosedIcon
+                      className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
+                      aria-hidden="true"
+                    />
+                  )}
                 </span>
-                Sign in
+                {isLoading ? "Loading..." : "Sign in"}
               </button>
             </div>
           </form>

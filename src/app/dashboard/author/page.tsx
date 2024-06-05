@@ -104,7 +104,10 @@ export default function AuthorPage() {
                     >
                       <img
                         className="mx-auto h-20 w-20 rounded-full lg:h-24 lg:w-24"
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqIcU3viBYjZFG-QKpWRF0_wusCpjEhVBg8TanplfNKg&s"
+                        src={
+                          author.img_url ??
+                          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqIcU3viBYjZFG-QKpWRF0_wusCpjEhVBg8TanplfNKg&s"
+                        }
                         alt=""
                       />
                       <div className="space-y-2">

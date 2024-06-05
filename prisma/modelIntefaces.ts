@@ -22,6 +22,7 @@ interface User {
     email: string;
     password: string;
     bio?: string | null;
+    img_url?: string | null;
     credit: number;
     books: Book[];
     createdAt: Date;

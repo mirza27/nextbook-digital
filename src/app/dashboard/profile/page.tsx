@@ -3,12 +3,19 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { FormEvent } from "react";
-import next from "next";
 import { useRouter } from "next/navigation";
 
+import { createClient } from "@supabase/supabase-js";
+import Link from "next/link";
+
+const supabase = createClient(
+  "https://cywxxjvvycwkbndxufbk.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5d3h4anZ2eWN3a2JuZHh1ZmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTYyNjMxNDQsImV4cCI6MjAzMTgzOTE0NH0.Tbgu20t6W467n1YuIvfitXorggdYU6ajmLapnLRlI08"
+);
 export default function UserProfile() {
   const [user, setUser] = useState<User | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const router = useRouter();
 
   const getUserProfile = async () => {
@@ -16,7 +23,6 @@ export default function UserProfile() {
       const response = await fetch("/api/user");
       const data = await response.json();
       setUser(data.user);
-      // router.push("/dashboard");
     } catch (error) {
       console.log(error);
       return [];
@@ -25,13 +31,40 @@ export default function UserProfile() {
     }
   };
 
+  // rubah file image
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
+  const uploadImage = async (file: File) => {
+    const { data, error } = await supabase.storage
+      .from("profile_image")
+      .upload(`/${file.name}`, file);
+    if (error) {
+      throw new Error(`Failed to upload image ${error.message}`);
+    }
+    const imageUrl = supabase.storage
+      .from("profile_image")
+      .getPublicUrl(data.path).data.publicUrl;
+    return imageUrl;
+  };
+
   const saveProfileData = async (e: FormEvent<HTMLFormElement>) => {
+    setIsLoading(true);
     e.preventDefault();
     if (!user) {
       throw new Error("User is undefined");
     }
 
     try {
+      let imageUrl;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+        console.log(imageUrl);
+      }
+
       console.log(user);
       const response = await fetch(`/api/user/${user.user_id}`, {
         method: "PATCH",
@@ -43,6 +76,7 @@ export default function UserProfile() {
           email: user.email!,
           bio: user.bio!,
           credit: user.credit!,
+          img_url: imageUrl ?? user.img_url,
         }),
       });
       const data = await response.json();
@@ -62,6 +96,8 @@ export default function UserProfile() {
         title: "Error",
         text: error.message || "Failed to save profile.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -147,6 +183,40 @@ export default function UserProfile() {
               </div>
               <div className="mt-5 md:col-span-2 md:mt-0">
                 <div className="grid grid-cols-6 gap-6">
+                  <div className="sm:col-span-6">
+                    <label
+                      htmlFor="photo"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Photo
+                    </label>
+                    <div className="mt-1 flex items-center">
+                      <span className="h-12 w-12 overflow-hidden rounded-full bg-gray-100">
+                        {user.img_url ? (
+                          <img
+                            src={user.img_url}
+                            alt="Profile"
+                            className="h-full w-full"
+                          />
+                        ) : (
+                          <svg
+                            className="h-full w-full text-gray-300"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+                        )}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="ml-5"
+                        onChange={handleImageChange}
+                      />
+                    </div>{" "}
+                  </div>
+
                   <div className="col-span-6 sm:col-span-3">
                     <label
                       htmlFor="first-name"
@@ -241,14 +311,15 @@ export default function UserProfile() {
             <button
               type="button"
               className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              disabled={isLoading}
             >
-              Cancel
+              <Link href={"/dashboard"}>Cancel</Link>
             </button>
             <button
               type="submit"
               className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
-              Save
+              {isLoading ? "Loading..." : "Save"}
             </button>
           </div>
         </form>

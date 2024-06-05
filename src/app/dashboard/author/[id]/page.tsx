@@ -67,7 +67,10 @@ export default function Example() {
                 <div className="relative">
                   <img
                     className="h-16 w-16 rounded-full"
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqIcU3viBYjZFG-QKpWRF0_wusCpjEhVBg8TanplfNKg&s"
+                    src={
+                      author?.img_url ??
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqIcU3viBYjZFG-QKpWRF0_wusCpjEhVBg8TanplfNKg&s"
+                    }
                     alt=""
                   />
                   <span

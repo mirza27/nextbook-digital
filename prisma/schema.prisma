@@ -41,6 +41,7 @@ model User {
   password  String
   bio       String?
   credit    Int
+  img_url   String?
   books     Book[]
   collections  Collection[]
   createdAt        DateTime  @default(now())

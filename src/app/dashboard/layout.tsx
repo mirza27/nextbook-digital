@@ -22,6 +22,7 @@ function classNames(...classes: (string | undefined | null | false)[]) {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | undefined>();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getUserProfile = async () => {
     try {
@@ -58,6 +59,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Logout failed:", error);
       Swal.fire("Error", "Failed to log out", "error");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -76,14 +79,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <div className="border-b border-gray-700">
                     <div className="flex h-16 items-center justify-between px-4 sm:px-0">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <img
-                            className="h-8 w-8"
-                            src="https://plus.unsplash.com/premium_vector-1711505230579-e446d3e5b86f?bg=FFFFFF&q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
-                            "
-                            alt="Your Company"
-                          />
-                        </div>
+                        {isLoading || !user ? (
+                          <div className="flex-shrink-0">
+                            <img
+                              className="h-8 w-8"
+                              src={
+                                "https://plus.unsplash.com/premium_vector-1711505230579-e446d3e5b86f?bg=FFFFFF&q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                              }
+                              alt="Your Company"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex-shrink-0">
+                            <img
+                              className="h-8 w-8"
+                              src={user.img_url!}
+                              alt="Your Company"
+                            />
+                          </div>
+                        )}
+
                         <div className="hidden md:block">
                           <div className="ml-10 flex items-baseline space-x-4">
                             {navigation.map((item) => (
@@ -117,7 +132,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     </span>
                                     <img
                                       className="h-8 w-8 rounded-full bg-cover-circle"
-                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmyoQ5HI7MXBYtxT9xBSpbUvVbcUPgpJaIOHfgP3_ahQ&s"
+                                      src={user.img_url!}
                                       alt=""
                                     />
                                   </Menu.Button>

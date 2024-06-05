@@ -5,6 +5,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import Swal from "sweetalert2";
 import { FormEvent } from "react";
 import next from "next";
+import { createClient } from "@supabase/supabase-js";
 
 export default function EditBook() {
   const params = useParams<{ id: string }>();
@@ -12,7 +13,14 @@ export default function EditBook() {
   const [book, setBook] = useState<Book | undefined>();
   const [categories, setCategories] = useState<BookCategory[]>([]);
   const [choosedCategory, setChoosedCategory] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFileName, setImageFileName] = useState<string | null>(null);
   const router = useRouter();
+
+  const supabase = createClient(
+    "https://cywxxjvvycwkbndxufbk.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5d3h4anZ2eWN3a2JuZHh1ZmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTYyNjMxNDQsImV4cCI6MjAzMTgzOTE0NH0.Tbgu20t6W467n1YuIvfitXorggdYU6ajmLapnLRlI08"
+  );
 
   const getBookData = async () => {
     try {
@@ -40,6 +48,27 @@ export default function EditBook() {
     }
   };
 
+  // rubah file image
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+      setImageFileName(e.target.files[0].name);
+    }
+  };
+
+  const uploadImage = async (file: File) => {
+    const { data, error } = await supabase.storage
+      .from("profile_image")
+      .upload(`/book_cover/${file.name}`, file);
+    if (error) {
+      throw new Error(`Failed to upload image ${error.message}`);
+    }
+    const imageUrl = supabase.storage
+      .from("profile_image")
+      .getPublicUrl(data.path).data.publicUrl;
+    return imageUrl;
+  };
+
   const saveBookData = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!book) {
@@ -47,6 +76,14 @@ export default function EditBook() {
     }
 
     try {
+      setIsLoading(true);
+      let imageUrl;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+        imageUrl = imageUrl.replace(/^https?:\/\//, "");
+        console.log(imageUrl);
+      }
+
       const response = await fetch(`/api/book/${params.id}`, {
         method: "PATCH",
         headers: {
@@ -55,7 +92,7 @@ export default function EditBook() {
         body: JSON.stringify({
           title: book.title,
           description: book.desc,
-          img_url: book.img_url,
+          img_url: imageUrl,
           book_url: book.book_url,
           price: book.price,
           book_category_id: parseInt(choosedCategory),
@@ -247,29 +284,67 @@ export default function EditBook() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-6">
-                  <div className="col-span-3 sm:col-span-2">
-                    <label
-                      htmlFor="company-website"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Book cover url
-                    </label>
-                    <div className="mt-1 flex rounded-md shadow-sm">
-                      <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
-                        http://
-                      </span>
-                      <input
-                        type="text"
-                        name="company-website"
-                        id="company-website"
-                        value={book!.img_url ?? ""}
-                        onChange={(e) =>
-                          setBook({ ...book!, img_url: e.target.value })
-                        }
-                        className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                        placeholder="www.example.com"
+                {/* {Image} */}
+
+                <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
+                  <label
+                    htmlFor="cover-photo"
+                    className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                  >
+                    Cover photo
+                  </label>
+                  {imageFileName ?? (
+                    <div>
+                      <img
+                        src={`https://${book.img_url}`}
+                        alt=""
+                        className="h-24 w-24 rounded-md object-cover"
                       />
+                    </div>
+                  )}
+
+                  <div className="mt-1 sm:col-span-2 sm:mt-0">
+                    <div className="flex max-w-lg justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
+                      <div className="space-y-1 text-center">
+                        <svg
+                          className="mx-auto h-12 w-12 text-gray-400"
+                          stroke="currentColor"
+                          fill="none"
+                          viewBox="0 0 48 48"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+
+                        <div className="flex text-sm text-gray-600">
+                          <label
+                            htmlFor="file-upload"
+                            className="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
+                          >
+                            <span>Upload a file </span>
+                            <input
+                              id="file-upload"
+                              name="file-upload"
+                              type="file"
+                              className="sr-only"
+                              onChange={handleImageChange}
+                            />
+                          </label>
+                          {imageFileName ? ( // Tampilkan nama file yang dipilih
+                            <p className="text-sm text-gray-500">
+                              {imageFileName}
+                            </p>
+                          ) : (
+                            <p className="pl-1">or drag and drop</p>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500">PNG, JPG, GIF</p>
+                      </div>
                     </div>
                   </div>
                 </div>

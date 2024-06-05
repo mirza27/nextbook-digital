@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { decrypt } from './lib/encrypt'
+import { updateSession } from './lib/session';
 
 // tabel path
 const protectedRoutes = [
@@ -37,6 +38,10 @@ export default async function middleware(req: NextRequest) {
     session?.userId &&
     !req.url.startsWith('/dashboard')
   ) {
+
+    // update sessionu
+    updateSession();
+
     console.log("kena ini")
     return NextResponse.redirect(new URL('/', req.url))
   }
